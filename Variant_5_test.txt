@@ -1,0 +1,11 @@
+S, F, L
+a, b, c, d
+S -> bS
+S -> aF
+S -> d
+F -> cF
+F -> dF
+F -> aL
+L -> aL
+L -> c
+F -> b
