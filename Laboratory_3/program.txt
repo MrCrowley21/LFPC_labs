@@ -1,0 +1,18 @@
+define leap_year(year){
+    if year // 4 != 0 || year // 100 == 0 && year // 400 != 0{
+        return "not leap"
+    }
+    else{
+        return "leap"
+    }
+}
+
+define main(){
+    set year = 1992
+    set phi = 1.618
+    set statement = !!true
+    set fib = "Fibonacci everywhere"
+    set leap = leap_year(year)
+    print(year)
+    print("It is ", leap)
+}

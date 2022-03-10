@@ -1,0 +1,61 @@
+G(L) = {Vn, Vt, S, P}
+Vn = {<program>, <functions>, <function>, <function_definition>, <statements>, <statement>, <declaration>,
+    <function_call>, <list_of_arguments>, <assignment>, <return_statement>, <conditional_statement>, <condition>,
+    <operations>, <operand>, <operator>, <arithmetic_operator>, <logical_operator>, <relational_operator>, <value>,
+    <number>, <integer>, <float>, <nonzero_digits>, <digits>, <string>, <boolean>, <characters>, <identifier>, <letters>}
+Vt = {A..Z, a..z, 0..9, _, (, ), {, }, ?, ., !, &, |, ',', ', ", *, /, //, =, >, <, ==, !=, <=, >=, &&, ||, !!,
+    true, false, define, set, if, else, return, print, NEWLINE, ENDMARKER}
+S = <program>
+P = {
+    <program>: [<functions>]ENDMARKER
+    <functions>: <function>+
+    <function>: <function_definition>{<statements>}
+    <function_definition>: define<identifier>(<list_of_arguments>)
+                          |define<identifier>()
+    <statements>: <statement[NEWLINE]*>+
+    <statement>: <declaration>
+                |<conditional_statement>
+                |<function_call>
+                |<assignment>
+                |<return_statement>
+    <declaration>: set <identifier> = <value>
+                  |set <identifier> = <function_call>
+                  |set <identifier> = <operations>
+    <function_call>: <function_name>()
+                    |<function_name>(<list_of_arguments>)
+    <list_of_arguments>:[<identifier>,]*<identifier>
+    <assignment>: <identifier> = <value>
+                 |<identifier> = <function_call>
+                 |<identifier> = <operations>
+    <return_statement>: return <value>|
+                        return <identifier>
+                        return <operations>
+    <conditional_statement>: if <condition>{<statements>}
+                            |if <condition>{<statements>} else{<statements>}
+    <condition>: [<identifier>|<value>] <relational_operator> [identifier|value] [<logical_operator> <condition>]*
+    <operations>: <operand> <operator> [<operand> <operator>]* <operand>
+    <operand>: <value>
+              |<identifier>
+    <operator>: <arithmetic_operator>
+               |<logical_operator>
+               |<relational_operator>
+    <arithmetic_operator>: +|-|*|/|//
+    <logical_operator>: &&| || | !!
+    <relational_operator>: >|<|>=|<=|==|!=
+    <value>: <number>
+            |<string>
+            |<boolean>
+    <number>: <integer>
+             |<float>
+    <integer>: <nonzero_digits> <digits>*
+    <float>: <integer>.<digits>+
+            |0.<digits+>
+    <nonzero_digits>: 1|2|3|4|5|6|7|8|9
+    <digits>: 0|1|2|3|4|5|6|7|8|9
+    <string>: "<characters>*"
+    <boolean>: true
+              |false
+    <characters>: a|..|z|A|..|Z|0|..|9|.|,|;|?|!|(|)|{|}|\|/|||%|&|^|#|-|#|:|'
+    <identifier>: <letters>(_*|<digits>*|<letters>*)*
+    <letters>: a|..|z|A|..|Z
+}
