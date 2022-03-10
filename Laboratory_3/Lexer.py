@@ -34,8 +34,8 @@ class Lexer:
         elif [i for i in OPERATORS if token in i]:
             return ''.join([i[0] for i in OPERATORS if token in i])
         # checks if identifier
-        elif bool(re.search(IDENTIFIER, token)):
-            return 'IDENTIFIER'
+        elif bool(re.search(r'^[A-Za-z][A-Za-z0-9_]*$', token)):
+            return IDENTIFIER
         # checks if comma
         elif token == COMMA:
             return 'COMMA'
