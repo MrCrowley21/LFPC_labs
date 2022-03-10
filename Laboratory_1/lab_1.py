@@ -48,6 +48,7 @@ for line in lines[2:]:
 # determine all right parts of production of the same non-terminal symbol
 set_of_productions = {vn[0]: [prod_right[1] for prod_right in set_of_productions if prod_right[0] == vn[0]] for
                       vn in set_of_productions}
+print(set_of_productions)
 
 visited = set()  # set of visited nodes
 order = []  # the order of appearance of nodes in traversing
@@ -72,20 +73,17 @@ set_of_productions_fa = {}  # set of productions with Finite Automaton symbols
 # build the Finite Automaton
 for left_part in set_of_productions:
     # rise error if there are the non-terminal symbol does not exist
-    print(set_of_productions)
     if left_part not in nonterminal_symbols:
         raise Exception("Incorrect non-terminal symbols in production")
     # change non-terminal symbols into Finite Automaton symbol
     set_of_productions_fa[fa_symbols[left_part]] = set_of_productions[left_part]
     left_part_fa = fa_symbols[left_part]
     # initiate the dictionary of productions for each unique non-terminal symbol
-    if left_part not in finiteAutomaton:
+    if left_part_fa not in finiteAutomaton:
         finiteAutomaton[left_part_fa] = {}
     for right_part in set_of_productions_fa[left_part_fa]:
         # rise error if there are the terminal symbol does not exist
-        if len(right_part) == 2 and right_part[0] not in terminal_symbols:
-            raise Exception("Incorrect terminal symbols in production")
-        elif len(right_part) == 1 and right_part[0] not in terminal_symbols:
+        if right_part[0] not in terminal_symbols:
             raise Exception("Incorrect terminal symbols in production")
         # set the final node
         if len(right_part) != 2:
@@ -95,7 +93,7 @@ for left_part in set_of_productions:
             # change the non-terminal symbols in destination to Finite Automaton symbols
             right_part = right_part.replace(right_part[1], fa_symbols[right_part[1]])
             finiteAutomaton[left_part_fa][right_part[0]] = right_part[1:]
-            # add edges to the graph
+        # add edges to the graph
         G.add_edge(left_part_fa, finiteAutomaton[left_part_fa][right_part[0]], color=color[right_part[0]])
         # add edges to list of edges
         edge_list.append((left_part_fa, finiteAutomaton[left_part_fa][right_part[0]]))
