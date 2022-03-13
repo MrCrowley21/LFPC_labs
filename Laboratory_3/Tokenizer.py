@@ -1,3 +1,14 @@
+
+
+
+ #                !!!NOTE!!!
+ ##############################################
+ # This file remains due to the author desire #
+ # It is no more used anywhere in the actual  #
+ # executable                                 #
+ ##############################################
+
+
 import re
 from Errors import *
 
