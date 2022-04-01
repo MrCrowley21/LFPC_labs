@@ -1,0 +1,12 @@
+S, A, B, C, D
+a, b
+S -> aB
+S -> DA
+A -> a
+A -> BD
+A -> bDAB
+B -> b
+B -> BA
+D -> epsilon
+D -> BA
+C -> BA
