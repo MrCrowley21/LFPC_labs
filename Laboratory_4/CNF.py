@@ -1,5 +1,6 @@
 from itertools import combinations
 from copy import deepcopy
+from GNF import GNF
 
 
 class CNF:
@@ -117,12 +118,13 @@ class CNF:
 
     # replace the renaming with its productions
     def __replace_renamings(self):
-        replaced = False  # check if everythin was replaced
-        while not replaced:
+        replaced = False  # check if everything was replaced
+        while not replaced and len(self.renamings) > 0:
             for renaming in self.renamings:
                 left = renaming[0]
                 right = renaming[1]
                 for production in self.grammar_wt_renamings[right]:
+                    # print(renaming)
                     if production not in self.grammar_wt_renamings[left]:
                         self.grammar_wt_renamings[left].append(production)
                     else:
@@ -133,6 +135,7 @@ class CNF:
         self.grammar_wt_renamings = deepcopy(self.nonempty_productions)
         for nonterminal in self.grammar_wt_renamings:
             for production in self.grammar_wt_renamings[nonterminal]:
+                self.__get_renamings(nonterminal, production)
                 # remove renaming if exists
                 if len(production) == 1 and production[0] in self.nonterminals:
                     self.grammar_wt_renamings[nonterminal].remove(production)
@@ -155,17 +158,17 @@ class CNF:
     # (that derives in combination o terminals and productive nonterminals)
     def __update_productive_symbols(self, nonterminal):
         updated = False  # check if the list was updated
-        if nonterminal not in self.productive_symbs:
-            for production in self.grammar_wt_nonproductives[nonterminal]:
-                # counts the length of productive symbols in the production
-                count = 0
-                while count < len(production) and (production[count] in self.productive_symbs or production[count] in
+        for production in self.grammar_wt_nonproductives[nonterminal]:
+            # counts the length of productive symbols in the production
+            count = 0
+            while count < len(production) and (production[count] in self.productive_symbs or production[count] in
                                                    self.terminals):
-                    count += 1
-                # if all symbols are productive, update the list and stop
-                if count == len(production):
-                    self.productive_symbs.append(nonterminal)
-                    updated = True
+                count += 1
+            # if all symbols are productive, update the list and stop
+            if count == len(production):
+                self.productive_symbs.append(nonterminal)
+            else:
+                updated = True
         return updated
 
     # remove unproductive productions from the grammar
@@ -182,8 +185,11 @@ class CNF:
         self.__get_direct_productive_symbols()
         updated = True  # check if productions were updated
         while updated:
+            updated = False
             for nonterminal in self.grammar_wt_nonproductives:
-                updated = self.__update_productive_symbols(nonterminal)
+                if nonterminal not in self.productive_symbs:
+                    if self.__update_productive_symbols(nonterminal):
+                        updated = self.__update_productive_symbols(nonterminal)
 
     # build the grammar without unproductive symbols
     def __get_grammar_wt_nonproductives(self):
@@ -202,6 +208,7 @@ class CNF:
             for symbol in production:
                 if symbol not in self.accessible_symbols and symbol in self.grammar_wt_unacces:
                     self.accessible_symbols.append(symbol)
+
     # get the set of accessible symbols
     def __get_accessible_set(self):
         self.grammar_wt_unacces = deepcopy(self.grammar_wt_nonproductives)
@@ -294,7 +301,7 @@ class CNF:
         if production[(len(production) - 4):] in self.replaced_nonterminal_dict:
             production = self.__modify_production(production, nonterminal, i, production[(len(production) - 4):])
             replaced += 1
-        # checl last two symbols
+        # check the last two symbols
         if production[:4] in self.replaced_nonterminal_dict:
             production = self.__modify_production(production, nonterminal, i, production[:4])
             replaced += 1
@@ -346,6 +353,7 @@ class CNF:
 
     # convert grammar to Chomsky Normal Form
     def transform_to_CNF(self):
+        self.y_index = 0
         self.cnf_grammar = {}  # dictionary with converted grammar
         self.__transform_terminals()  # transform terminal symbols
         self.__transform_nonterminals()  # transform nonterminal symbols
@@ -365,3 +373,11 @@ class CNF:
         print('Step 4. Eliminate inaccessible symbols\n', self.grammar_wt_unacces)
         print('Step 5. Convert to Chomsky Normal Form\n', self.transform_to_CNF())
 
+    # illustrate the steps of converting the grammar into Greibach Normal Form
+    def transform_to_GNF(self):
+        self.y_index = 0
+        self.transform_to_CNF()
+        gnf = GNF(self.cnf_grammar.keys(), self.terminals, self.cnf_grammar)
+        print('Initial grammar:\n', self.productions)
+        print('Chomsky Normal Form:\n', self.transform_to_CNF())
+        gnf.show_transitions()
