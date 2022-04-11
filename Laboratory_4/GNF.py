@@ -14,7 +14,7 @@ class GNF:
         self.accessible_symbols = []  # list of accessible symbols
         self.prod_leading_terminals = []  # list of terminals that leading production
         self.gnf_grammar = {}  # grammar in GNF
-        self.iterate = 2
+        self.iterate = 2  # the index of nonterminal after left factorization
 
     # Create a dictionary with the first nonterminals for each nonterminal
     def get_first_symbol_prod(self, grammar):
@@ -211,6 +211,10 @@ class GNF:
         while inner_index < len(grammar[nonterminal]):
             production = grammar[nonterminal][inner_index]
             # check if in any case may be replaced by terminal
+            i = 1
+            if len(production) > 1:
+                if '0' <= production[1] <= '9':
+                    i = 2
             if production[0] == self.prod_leading_terminals[index]:
                 for result in grammar[self.prod_leading_terminals[index]]:
                     new_production = result + production[1:]
@@ -235,14 +239,10 @@ class GNF:
         i = 0
         for i, pair in enumerate(zip(prod_1, prod_2)):
             if pair[0] != pair[1]:
-                if '0' <= pair[0] <= '9' and (pair[1] <= '0' or pair[1] >= '9'):
-                    print(1)
-                    return i - 1
-                elif '0' <= pair[1] <= '9' and (pair[0] <= '0' or pair[0] >= '9'):
-                    print(2)
+                if '0' <= pair[0] <= '9' or '0' <= pair[1] <= '9':
                     return i - 1
                 return i
-        return i
+        return 0
 
     # Group productions by the largest common factor
     def group_by_factor(self, candidates):
@@ -295,11 +295,17 @@ class GNF:
             self.iterate = 2
             for group in self.group_by_factor(candidates):
                 productions = group[0]
+                is_left_factoring = False
+                for production in productions:
+                    if production[-(len(nonterminal)):] == nonterminal:
+                        is_left_factoring = True
+                        break
                 longest = group[1]
-                if len(productions) > 1:
+                if len(productions) > 1 and is_left_factoring:
                     self.transform_common_factor(longest, nonterminal, productions)
                 else:
-                    self.gnf_grammar[nonterminal].append(productions[0])
+                    for production in productions:
+                        self.gnf_grammar[nonterminal].append(production)
         return self.gnf_grammar
 
     # Build Greibach normal form from grammar

@@ -7,7 +7,6 @@ A -> BD
 A -> bDAB
 B -> b
 B -> BA
-B -> DA
 D -> epsilon
 D -> BA
 C -> BA
