@@ -1,0 +1,10 @@
+S, A, B, C, D
+S
+a, b, c, d, e, f, g
+S -> Cf
+C -> abB
+B -> Dc
+D -> A
+D -> gA
+A -> d
+A -> e

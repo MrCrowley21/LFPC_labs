@@ -1,0 +1,9 @@
+S, A, B, C, D
+S
+a, b, c, d, e, f, g, e
+S -> Ag
+A -> AbD
+A -> C
+C -> e
+C -> CfD
+D -> e
